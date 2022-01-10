@@ -33,6 +33,8 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  intl:
+  google_fonts:
   # theme 정보 저장을 위한 storage 설정 
   get_storage:
   get:

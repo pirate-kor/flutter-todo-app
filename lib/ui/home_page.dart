@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:todoapp/service/notification_service.dart';
 import 'package:todoapp/service/theme_service.dart';
+import 'package:todoapp/ui/theme.dart';
+import 'package:todoapp/ui/widgets/button.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -28,9 +31,22 @@ class _HomePageState extends State<HomePage> {
       // backgroundColor: Colors.white,
       body: Column(
         children: [
-          Text(
-            "Theme Datas",
-            style: TextStyle(fontSize: 30),
+          Container(
+            margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                   Text(DateFormat.yMMMMd().format(DateTime.now()),
+                   style: subHeadingStyle,),
+                   Text("Today")
+                ],),
+              ),
+              MyButton(label: "+ Add Task", onTap: () => null)
+            ],),
           )
         ],
       ),
@@ -39,6 +55,8 @@ class _HomePageState extends State<HomePage> {
 
   _appBar() {
     return AppBar(
+      elevation: 0,
+      backgroundColor: context.theme.backgroundColor,
       leading: GestureDetector(
         onTap: () {
           ThemeService().switchTheme();
@@ -51,11 +69,19 @@ class _HomePageState extends State<HomePage> {
           notifyHelper.scheduledNotification();
         },
         child: Icon(
-          Icons.nightlight_round,
+          Get.isDarkMode ?  Icons.wb_sunny_outlined : Icons.nightlight_round,
           size: 20,
+          color: Get.isDarkMode ?  Colors.white : Colors.black,
         ),
       ),
       actions: [
+        /*
+        CircleAvatar(
+          backgroundImage: AssetImage(
+            "images/profile.png"
+          ),
+        ),
+        */
         Icon(
           Icons.person,
           size: 20,
