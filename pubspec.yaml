@@ -41,6 +41,7 @@ dependencies:
   # notification 설정을 위한 플러그인 
   flutter_local_notifications:
   flutter_native_timezone:
+  date_picker_timeline:
 
 dev_dependencies:
   flutter_test:
