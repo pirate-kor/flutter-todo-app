@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:todoapp/service/notification_service.dart';
 import 'package:todoapp/service/theme_service.dart';
+import 'package:todoapp/ui/add_task_bar.dart';
 import 'package:todoapp/ui/theme.dart';
 import 'package:todoapp/ui/widgets/button.dart';
 
@@ -35,7 +36,14 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         children: [
           _addTaskBar(),
-          Container(
+          _addDateBar(),
+        ],
+      ),
+    );
+  }
+
+  _addDateBar() {
+    return Container(
             margin: const EdgeInsets.only(top: 20, left: 20),
             child: DatePicker(
               DateTime.now(),
@@ -60,13 +68,10 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.w600,
                       color: Colors.grey)),
               onDateChange: (date) {
-                _selectedDate
+                _selectedDate = date;
               }
             ),
-          )
-        ],
-      ),
-    );
+          );
   }
 
   _addTaskBar() {
@@ -87,7 +92,7 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          MyButton(label: "+ Add Task", onTap: () => null)
+          MyButton(label: "+ Add Task", onTap: () => Get.to(AddTaskPage()))
         ],
       ),
     );
