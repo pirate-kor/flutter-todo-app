@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:todoapp/db/db_helper.dart';
 import 'package:todoapp/service/theme_service.dart';
 import 'package:todoapp/ui/home_page.dart';
 import 'package:todoapp/ui/theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await DBHelper.initDb();
   await GetStorage.init();
   runApp(const MyApp());
 }
