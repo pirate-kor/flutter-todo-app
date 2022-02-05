@@ -1,13 +1,17 @@
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:todoapp/controllers/task_controller.dart';
+import 'package:todoapp/model/task.dart';
 import 'package:todoapp/service/notification_service.dart';
 import 'package:todoapp/service/theme_service.dart';
 import 'package:todoapp/ui/add_task_bar.dart';
 import 'package:todoapp/ui/theme.dart';
 import 'package:todoapp/ui/widgets/button.dart';
+import 'package:todoapp/ui/widgets/task_tile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -17,6 +21,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _taskController = Get.put(TaskController());
   var notifyHelper;
   DateTime _selectedDate = DateTime.now();
 
@@ -37,41 +42,79 @@ class _HomePageState extends State<HomePage> {
         children: [
           _addTaskBar(),
           _addDateBar(),
+          SizedBox(height: 10),
+          _showTasks(),
         ],
       ),
     );
   }
 
+  _showTasks() {
+    return Expanded(
+      child: Obx(() {
+        return ListView.builder(
+            itemCount: _taskController.taskList.length,
+            itemBuilder: (_, index) {
+              print(_taskController.taskList.length);
+              return AnimationConfiguration.staggeredList(
+                position: index,
+                child: SlideAnimation(
+                  child: FadeInAnimation(
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            _showBottomSheet(
+                                context, _taskController.taskList[index]);
+                          },
+                          child: TaskTile(_taskController.taskList[index]),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            });
+      }),
+    );
+  }
+
+  _showBottomSheet(BuildContext context, Task task) {
+    Get.bottomSheet(Container(
+      padding: EdgeInsets.only(top: 4),
+      height: task.isCompleted == 1
+          ? MediaQuery.of(context).size.height * 0.24
+          : MediaQuery.of(context).size.height * 0.32,
+    ));
+  }
+
   _addDateBar() {
     return Container(
-            margin: const EdgeInsets.only(top: 20, left: 20),
-            child: DatePicker(
-              DateTime.now(),
-              height: 100,
-              width: 80,
-              initialSelectedDate: DateTime.now(),
-              selectionColor: primaryColor,
-              selectedTextColor: Colors.white,
-              dateTextStyle: GoogleFonts.lato(
-                  textStyle: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey)),
-              dayTextStyle: GoogleFonts.lato(
-                  textStyle: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey)),
-              monthTextStyle: GoogleFonts.lato(
-                  textStyle: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey)),
-              onDateChange: (date) {
-                _selectedDate = date;
-              }
-            ),
-          );
+      margin: const EdgeInsets.only(top: 20, left: 20),
+      child: DatePicker(DateTime.now(),
+          height: 100,
+          width: 80,
+          initialSelectedDate: DateTime.now(),
+          selectionColor: primaryColor,
+          selectedTextColor: Colors.white,
+          dateTextStyle: GoogleFonts.lato(
+              textStyle: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey)),
+          dayTextStyle: GoogleFonts.lato(
+              textStyle: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey)),
+          monthTextStyle: GoogleFonts.lato(
+              textStyle: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey)), onDateChange: (date) {
+        _selectedDate = date;
+      }),
+    );
   }
 
   _addTaskBar() {
@@ -92,7 +135,12 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          MyButton(label: "+ Add Task", onTap: () => Get.to(AddTaskPage()))
+          MyButton(
+              label: "+ Add Task",
+              onTap: () async {
+                await Get.to(AddTaskPage());
+                _taskController.getTasks();
+              })
         ],
       ),
     );

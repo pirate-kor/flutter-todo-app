@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:todoapp/controllers/taskController.dart';
+import 'package:todoapp/controllers/task_controller.dart';
 import 'package:todoapp/model/task.dart';
 import 'package:todoapp/ui/theme.dart';
 import 'package:todoapp/ui/widgets/button.dart';
