@@ -85,7 +85,52 @@ class _HomePageState extends State<HomePage> {
       height: task.isCompleted == 1
           ? MediaQuery.of(context).size.height * 0.24
           : MediaQuery.of(context).size.height * 0.32,
+      color: Get.isDarkMode ? darkGrayColor : Colors.white,
+      child: Column(
+        children: [
+          Container(
+              height: 6,
+              width: 120,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Get.isDarkMode ? Colors.grey[600] : Colors.grey[300])),
+          Spacer(),
+          task.isCompleted == 1
+              ? Container()
+              : _bottomSheetButton(
+                  label: "Task Completed",
+                  onTap: () {
+                    Get.back();
+                  },
+                  color: primaryColor,
+                  context: context)
+        ],
+      ),
     ));
+  }
+
+  _bottomSheetButton(
+      {required String label,
+      required Function()? onTap,
+      required Color color,
+      bool isClose = false,
+      required BuildContext context}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        height: 55,
+        width: MediaQuery.of(context).size.width * 0.9,
+        decoration: BoxDecoration(
+          border: Border.all(
+            width: 2,
+            color: isClose ? Colors.red : color,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          color: isClose ? Colors.red : color,
+        ),
+      ),
+    );
   }
 
   _addDateBar() {
