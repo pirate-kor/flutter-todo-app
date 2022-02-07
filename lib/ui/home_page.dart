@@ -56,6 +56,7 @@ class _HomePageState extends State<HomePage> {
             itemCount: _taskController.taskList.length,
             itemBuilder: (_, index) {
               print(_taskController.taskList.length);
+              Task task = _taskController.taskList[index];
               return AnimationConfiguration.staggeredList(
                 position: index,
                 child: SlideAnimation(
@@ -65,9 +66,9 @@ class _HomePageState extends State<HomePage> {
                         GestureDetector(
                           onTap: () {
                             _showBottomSheet(
-                                context, _taskController.taskList[index]);
+                                context, task);
                           },
-                          child: TaskTile(_taskController.taskList[index]),
+                          child: TaskTile(task),
                         ),
                       ],
                     ),
@@ -100,10 +101,31 @@ class _HomePageState extends State<HomePage> {
               : _bottomSheetButton(
                   label: "Task Completed",
                   onTap: () {
+                    _taskController.markTaskCompleted(task.id!);
                     Get.back();
                   },
                   color: primaryColor,
-                  context: context)
+                  context: context),
+          _bottomSheetButton(
+              label: "Delete Task",
+              onTap: () {
+                _taskController.delete(task);
+                Get.back();
+              },
+              color: Colors.red[300]!,
+              context: context),
+          SizedBox(
+            height: 20,
+          ),
+          _bottomSheetButton(
+              label: "Close",
+              onTap: () {
+                Get.back();
+              },
+              color: Colors.white,
+              isClose: true,
+              context: context),
+              SizedBox(height: 10,)
         ],
       ),
     ));
@@ -124,11 +146,17 @@ class _HomePageState extends State<HomePage> {
         decoration: BoxDecoration(
           border: Border.all(
             width: 2,
-            color: isClose ? Colors.red : color,
+            color: isClose ? Get.isDarkMode ? Colors.grey[600]! : Colors.grey[300]! : color,
           ),
           borderRadius: BorderRadius.circular(20),
-          color: isClose ? Colors.red : color,
+          color: isClose ? Colors.transparent : color,
         ),
+        child: Center(
+            child: Text(
+          label,
+          style:
+              isClose ? titleStyle : titleStyle.copyWith(color: Colors.white),
+        )),
       ),
     );
   }
