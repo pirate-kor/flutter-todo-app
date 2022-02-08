@@ -55,26 +55,54 @@ class _HomePageState extends State<HomePage> {
         return ListView.builder(
             itemCount: _taskController.taskList.length,
             itemBuilder: (_, index) {
-              print(_taskController.taskList.length);
               Task task = _taskController.taskList[index];
-              return AnimationConfiguration.staggeredList(
-                position: index,
-                child: SlideAnimation(
-                  child: FadeInAnimation(
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            _showBottomSheet(
-                                context, task);
-                          },
-                          child: TaskTile(task),
-                        ),
-                      ],
+              if (task.repeat == 'Daily') {
+                DateTime date = DateFormat.jm().parse(task.startTime.toString());
+                var myTime = DateFormat("HH:mm").format(date);
+                notifyHelper.scheduledNotification(
+                  int.parse(myTime.toString().split(":")[0]),
+                  int.parse(myTime.toString().split(":")[1]),
+                  task
+                );
+                return AnimationConfiguration.staggeredList(
+                  position: index,
+                  child: SlideAnimation(
+                    child: FadeInAnimation(
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              _showBottomSheet(context, task);
+                            },
+                            child: TaskTile(task),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
+                );
+              }
+              if (task.date == DateFormat.yMd().format(_selectedDate)) {
+                return AnimationConfiguration.staggeredList(
+                  position: index,
+                  child: SlideAnimation(
+                    child: FadeInAnimation(
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              _showBottomSheet(context, task);
+                            },
+                            child: TaskTile(task),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              } else {
+                return Container();
+              }
             });
       }),
     );
@@ -125,7 +153,9 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
               isClose: true,
               context: context),
-              SizedBox(height: 10,)
+          SizedBox(
+            height: 10,
+          )
         ],
       ),
     ));
@@ -146,7 +176,11 @@ class _HomePageState extends State<HomePage> {
         decoration: BoxDecoration(
           border: Border.all(
             width: 2,
-            color: isClose ? Get.isDarkMode ? Colors.grey[600]! : Colors.grey[300]! : color,
+            color: isClose
+                ? Get.isDarkMode
+                    ? Colors.grey[600]!
+                    : Colors.grey[300]!
+                : color,
           ),
           borderRadius: BorderRadius.circular(20),
           color: isClose ? Colors.transparent : color,
@@ -185,7 +219,9 @@ class _HomePageState extends State<HomePage> {
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Colors.grey)), onDateChange: (date) {
-        _selectedDate = date;
+        setState(() {
+          _selectedDate = date;
+        });
       }),
     );
   }
@@ -227,7 +263,7 @@ class _HomePageState extends State<HomePage> {
         onTap: () {
           ThemeService().switchTheme();
           notifyHelper.displayNotification(
-              title: "theme changed",
+              title: "Theme changed",
               body: Get.isDarkMode
                   ? "Activated Light Theme"
                   : "Activated Dark Theme");
